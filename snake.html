@@ -9,17 +9,28 @@
 
 
     <script>
-        var grid = document.getElementById("grid");
 
         var height = 20;
         var width = 20;
 
-        const snake = [];
+
+        /*
+            Random fruit generation without collision
+            Game over collisions:
+                hit wall
+                hit snake
+            Snake as list
+                Add to head and remove from tail
+        */
+
+        const grid = [];
 
         // Build grid
         for (var row = 0; row < height; row++) {
-            const newRow = grid.insertRow()
+            var table = document.getElementById("grid");
+            const newRow = table.insertRow()
             newRow.id = row;
+            grid[row] = [];
             for (var col = 0; col < width; col++) {
                 const cell = newRow.insertCell();
                 cell.id = `${row},${col}`;
@@ -30,25 +41,33 @@
                 if (row == height - 1) {
                     cell.classList.add("cell-last-row");
                 }
+                grid[row][col] = document.getElementById(`${row},${col}`);
             }
         }
 
-        var activeCell = document.getElementById("3,5");
-        activeCell.classList.add("snake");
+        const snake = [grid[3][5]];
 
-        var fruitCell = document.getElementById("5,7")
-        fruitCell.classList.add("fruit");
+        snake[0].classList.add("snake");
+
+        grid[5][7].classList.add("fruit");
 
         document.addEventListener("keydown", function(event) {
             const direction = event.key;
             if (["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"].includes(direction)) {
-                const nextCellCoordinate = calcNextCellCoordinate(activeCell.id, direction);
-                if (nextCellCoordinate != activeCell.id) {
-                    console.log(nextCellCoordinate);
+                var snakeHead = snake[0];
+                const snakeHeadCoordinate = [snakeHead.id.split(',')[0], snakeHead.id.split(',')[1]];
+                const nextCellCoordinate = calcNextCellCoordinate(snake[0].id, direction);
+                if (nextCellCoordinate == -1) {
+                    alert("HIT WALL - GAME OVER")
+                    return;
+                }
+                console.log(snakeHeadCoordinate, nextCellCoordinate);
+                if (nextCellCoordinate != snakeHead.id) {
                     // Means we moved
-                    activeCell.classList.remove("snake");
-                    activeCell = document.getElementById(nextCellCoordinate);
-                    activeCell.classList.add("snake");
+                    snakeHead.classList.remove("snake");
+                    snakeHead = document.getElementById(nextCellCoordinate);
+                    snakeHead.classList.add("snake");
+                    snake[0] = grid[nextCellCoordinate[0]][nextCellCoordinate[1]];
                 }
                 
             }
@@ -60,30 +79,31 @@
             var col = currentCoordinate.split(',')[1];
             switch (direction) {
                 case "ArrowUp":
-                    if (row > 0) {
-                        row--;
+                    if (row == 0) {
+                        return -1;
                     }
-                    console.log("up");
+                    row--;
                     break;
                 case "ArrowRight":
-                    // side effect, not ideal
-                    if (col < width - 1) {
-                        col++;
+                    if (col == width - 1) {
+                        return -1;
                     }
-                    console.log("right");
+                    col++;
                     break;
                 case "ArrowDown":
-                    if (row < height - 1) {
-                        row++;
+                    if (row == height - 1) {
+                        return -1;
                     }
+                    row++;
                     break;
                 case "ArrowLeft":
-                    if (col > 0) {
-                        col--;
+                    if (col == 0) {
+                        return -1;
                     }
+                    col--;
                     break;
             }
-            return `${row},${col}`
+            return [row, col];
         };
 
     </script>
