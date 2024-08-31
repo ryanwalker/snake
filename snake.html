@@ -1,0 +1,115 @@
+<html>
+    <head>
+        Snake
+    </head>
+    <body>
+        <table id="grid">
+        </table>
+    </body>
+
+
+    <script>
+        var grid = document.getElementById("grid");
+
+        var height = 20;
+        var width = 20;
+
+        const snake = [];
+
+        // Build grid
+        for (var row = 0; row < height; row++) {
+            const newRow = grid.insertRow()
+            newRow.id = row;
+            for (var col = 0; col < width; col++) {
+                const cell = newRow.insertCell();
+                cell.id = `${row},${col}`;
+                cell.classList.add("cell");
+                if (col == width - 1) {
+                    cell.classList.add("cell-last-col");
+                }
+                if (row == height - 1) {
+                    cell.classList.add("cell-last-row");
+                }
+            }
+        }
+
+        var activeCell = document.getElementById("3,5");
+        activeCell.classList.add("snake");
+
+        var fruitCell = document.getElementById("5,7")
+        fruitCell.classList.add("fruit");
+
+        document.addEventListener("keydown", function(event) {
+            const direction = event.key;
+            if (["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"].includes(direction)) {
+                const nextCellCoordinate = calcNextCellCoordinate(activeCell.id, direction);
+                if (nextCellCoordinate != activeCell.id) {
+                    console.log(nextCellCoordinate);
+                    // Means we moved
+                    activeCell.classList.remove("snake");
+                    activeCell = document.getElementById(nextCellCoordinate);
+                    activeCell.classList.add("snake");
+                }
+                
+            }
+
+        });
+
+        var calcNextCellCoordinate = (currentCoordinate, direction) => {
+            var row = currentCoordinate.split(',')[0];
+            var col = currentCoordinate.split(',')[1];
+            switch (direction) {
+                case "ArrowUp":
+                    if (row > 0) {
+                        row--;
+                    }
+                    console.log("up");
+                    break;
+                case "ArrowRight":
+                    // side effect, not ideal
+                    if (col < width - 1) {
+                        col++;
+                    }
+                    console.log("right");
+                    break;
+                case "ArrowDown":
+                    if (row < height - 1) {
+                        row++;
+                    }
+                    break;
+                case "ArrowLeft":
+                    if (col > 0) {
+                        col--;
+                    }
+                    break;
+            }
+            return `${row},${col}`
+        };
+
+    </script>
+
+    <style>
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+        .cell {
+            width: 30;
+            height: 30;
+            border-left: 2px solid black;
+            border-top: 2px solid black;
+        }
+        .cell-last-row {
+            border-bottom: 2px solid black;
+        }
+        .cell-last-col {
+            border-right: 2px solid black;
+        }
+        .fruit {
+            background-color: red;
+        }
+        .snake {
+            background-color: green;
+        }
+    </style>
+</html>
