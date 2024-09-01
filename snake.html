@@ -23,33 +23,6 @@
             return document.getElementById(`${coord[0]},${coord[1]}`);
         }
 
-        // Build grid
-        for (var row = 0; row < height; row++) {
-            var table = document.getElementById("grid");
-            const newRow = table.insertRow()
-            newRow.id = row;
-            grid[row] = [];
-            emptyCells[row] = [];
-            for (var col = 0; col < width; col++) {
-                const cell = newRow.insertCell();
-                cell.id = `${row},${col}`;
-                cell.classList.add("cell");
-                if (col == width - 1) {
-                    cell.classList.add("cell-last-col");
-                }
-                if (row == height - 1) {
-                    cell.classList.add("cell-last-row");
-                }
-                grid[row][col] = get([row, col]);
-                emptyCells[row][col] = get([row, col]);
-            }
-        }
-
-
-        const addFruit = (snake) => {
-
-        }
-
         class Snake {
             constructor(direction) {
                 this.direction = direction;
@@ -81,13 +54,55 @@
             }
         }
 
-        const snake = new Snake("down");
 
-        snake.addHead(get([2, 9]));
-        snake.addHead(get([3, 9]));
-        snake.addHead(get([4, 9]));
-        snake.addHead(get([5, 9]));
-        snake.addHead(get([6,9]));
+        // Build grid
+        for (var row = 0; row < height; row++) {
+            var table = document.getElementById("grid");
+            const newRow = table.insertRow()
+            newRow.id = row;
+            grid[row] = [];
+            emptyCells[row] = [];
+            for (var col = 0; col < width; col++) {
+                const cell = newRow.insertCell();
+                cell.id = `${row},${col}`;
+                cell.classList.add("cell");
+                if (col == width - 1) {
+                    cell.classList.add("cell-last-col");
+                }
+                if (row == height - 1) {
+                    cell.classList.add("cell-last-row");
+                }
+                grid[row][col] = get([row, col]);
+                emptyCells[row][col] = get([row, col]);
+            }
+        }
+
+        var snake;
+
+        const resetGame = () => {
+            for (var row = 0; row < height; row++) {
+                for (var col = 0; col < width; col++) {
+                    const cell = get([row, col]);
+                    cell.classList.remove('fruit');
+                    cell.classList.remove('snake');
+                }
+            }
+
+            snake = new Snake("down");
+
+            snake.addHead(get([2, 9]));
+            snake.addHead(get([3, 9]));
+            snake.addHead(get([4, 9]));
+            snake.addHead(get([5, 9]));
+        }
+
+        resetGame();
+
+        const addFruit = (snake) => {
+
+        }
+
+
 
 
         const keyToDirection = {
@@ -106,6 +121,7 @@
                 console.log(nextCell)
                 if (nextCell == undefined || nextCell.classList.contains("snake")) {
                     alert("GAME OVER")
+                    resetGame();
                 } else {
                     if (nextCell.classList.contains("fruit")) {
                         snake.addHead(nextCell);
