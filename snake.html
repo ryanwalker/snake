@@ -10,7 +10,9 @@
 
     <script>
         /*
-            Random fruit generation without collision
+            Auto-advance
+            Win game
+            Does fruit generation need to more sophisticated?
         */
 
         var height = 20;
@@ -79,6 +81,32 @@
 
         var snake;
 
+        const addRandomFruit = () => {
+            const emptyCells = getEmptySpaces();
+            const min = 0;
+            const max = emptyCells.length - 1;
+            const randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
+            console.log(emptyCells)
+            emptyCells[randomInt].classList.add('fruit');
+        }
+
+        const getEmptySpaces = () => {
+            const emptySpaces = [];
+            for (var row = 0; row < height; row++) {
+                for (var col = 0; col < width; col++) {
+                    const cell = grid[row][col];
+                    const classList = cell.classList;
+                    console.log(classList)
+                    if (!classList.contains('snake') && !classList.contains('fruit')) {
+                        console.log("PUSH")
+                        emptySpaces.push(cell);
+                    }
+                }
+            }
+            console.log(emptySpaces);
+            return emptySpaces;
+        };
+
         const resetGame = () => {
             for (var row = 0; row < height; row++) {
                 for (var col = 0; col < width; col++) {
@@ -94,14 +122,14 @@
             snake.addHead(get([3, 9]));
             snake.addHead(get([4, 9]));
             snake.addHead(get([5, 9]));
+
+            addRandomFruit();
         }
+
+
 
         resetGame();
-
-        const addFruit = (snake) => {
-
-        }
-
+        // addRandomFruit();
 
 
 
@@ -115,7 +143,7 @@
         document.addEventListener("keydown", function(event) {
             const direction = keyToDirection[event.key];
              
-            if (direction != undefined) {
+            if (direction != undefined && notOppositeDirection(direction, snake.direction)) {
                 snake.direction = direction
                 const nextCell = getNextCell(snake);
                 console.log(nextCell)
@@ -125,6 +153,7 @@
                 } else {
                     if (nextCell.classList.contains("fruit")) {
                         snake.addHead(nextCell);
+                        addRandomFruit();
                     } else {
                         snake.addHead(nextCell);
                         snake.removeTail();
@@ -171,6 +200,17 @@
             }
             return get([row, col]);
         };
+
+        const notOppositeDirection = (dir1, dir2) => {
+            return dir1 != oppositeOf[dir2];
+        }
+
+        const oppositeOf = {
+            "up": "down",
+            "left": "right",
+            "right": "left",
+            "down": "up",
+        }
 
     </script>
 
