@@ -15,6 +15,7 @@
 
 
         /*
+            // Can't go backwards
             Random fruit generation without collision
             Game over collisions:
                 hit wall
@@ -49,7 +50,10 @@
 
         snake[0].classList.add("snake");
 
-        grid[5][7].classList.add("fruit");
+        grid[1][3].classList.add("fruit");
+        grid[8][8].classList.add("fruit");
+        grid[13][14].classList.add("fruit");
+        grid[19][18].classList.add("fruit");
 
         document.addEventListener("keydown", function(event) {
             const direction = event.key;
@@ -59,17 +63,23 @@
                 const nextCellCoordinate = calcNextCellCoordinate(snake[0].id, direction);
                 if (nextCellCoordinate == -1) {
                     alert("HIT WALL - GAME OVER")
-                    return;
+                } else {
+                    const nextCell = grid[nextCellCoordinate[0]][nextCellCoordinate[1]];
+                    if (nextCell.classList.contains("fruit")) {
+                        // EAT FRUIT
+                        nextCell.classList.remove('fruit');
+                        nextCell.classList.add('snake');
+                        snake.unshift(nextCell);
+                    } else {
+                        // Add head
+                        nextCell.classList.add('snake');
+                        snake.unshift(nextCell);
+
+                        // Remove tail
+                        var snakeTail = snake.pop();
+                        snakeTail.classList.remove('snake');
+                    }
                 }
-                console.log(snakeHeadCoordinate, nextCellCoordinate);
-                if (nextCellCoordinate != snakeHead.id) {
-                    // Means we moved
-                    snakeHead.classList.remove("snake");
-                    snakeHead = document.getElementById(nextCellCoordinate);
-                    snakeHead.classList.add("snake");
-                    snake[0] = grid[nextCellCoordinate[0]][nextCellCoordinate[1]];
-                }
-                
             }
 
         });
