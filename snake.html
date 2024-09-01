@@ -9,11 +9,6 @@
 
 
     <script>
-
-        var height = 20;
-        var width = 20;
-
-
         /*
             // Can't go backwards
             Random fruit generation without collision
@@ -24,7 +19,14 @@
                 Add to head and remove from tail
         */
 
+        var height = 20;
+        var width = 20;
+        const moveEvery = 1000;
         const grid = [];
+
+        const get = (coord) => {
+            return document.getElementById(`${coord[0]},${coord[1]}`);
+        }
 
         // Build grid
         for (var row = 0; row < height; row++) {
@@ -42,78 +44,110 @@
                 if (row == height - 1) {
                     cell.classList.add("cell-last-row");
                 }
-                grid[row][col] = document.getElementById(`${row},${col}`);
+                grid[row][col] = get([row, col]);
             }
         }
 
-        const snake = [grid[3][5]];
 
-        snake[0].classList.add("snake");
+        class Snake {
+            constructor(direction) {
+                this.direction = direction;
+                this.body = [];
 
-        grid[1][3].classList.add("fruit");
-        grid[8][8].classList.add("fruit");
-        grid[13][14].classList.add("fruit");
-        grid[19][18].classList.add("fruit");
+                this.addHead(get([2, 9]));
+                this.addHead(get([3, 9]));
+                this.addHead(get([4, 9]));
+                this.addHead(get([5, 9]));
+            }
+
+            getHead() {
+                if (this.body.lengh == 0) {
+                    return undefined;
+                }
+                return this.body[0];
+            }
+
+            addHead(cell) {
+                cell.classList.remove('fruit');
+                cell.classList.add('snake');
+                this.body.unshift(cell)
+            }
+
+            removeTail() {
+                if (this.body.lengh == 0) {
+                    return;
+                }
+
+                this.body.pop().classList.remove('snake');
+            }
+        }
+
+        const snake = new Snake("down");
+
+        const keyToDirection = {
+            "ArrowUp": "up",
+            "ArrowDown": "down",
+            "ArrowLeft": "left",
+            "ArrowRight": "right", 
+        }
 
         document.addEventListener("keydown", function(event) {
-            const direction = event.key;
-            if (["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"].includes(direction)) {
-                var snakeHead = snake[0];
-                const snakeHeadCoordinate = [snakeHead.id.split(',')[0], snakeHead.id.split(',')[1]];
-                const nextCellCoordinate = calcNextCellCoordinate(snake[0].id, direction);
-                if (nextCellCoordinate == -1) {
-                    alert("HIT WALL - GAME OVER")
+            const direction = keyToDirection[event.key];
+             
+            if (direction != undefined) {
+                snake.direction = direction
+                const nextCell = getNextCell(snake);
+                console.log(nextCell)
+                if (nextCell == undefined) {
+                    alert("GAME OVER")
                 } else {
-                    const nextCell = grid[nextCellCoordinate[0]][nextCellCoordinate[1]];
                     if (nextCell.classList.contains("fruit")) {
-                        // EAT FRUIT
-                        nextCell.classList.remove('fruit');
-                        nextCell.classList.add('snake');
-                        snake.unshift(nextCell);
+                        snake.addHead(nextCell);
                     } else {
-                        // Add head
-                        nextCell.classList.add('snake');
-                        snake.unshift(nextCell);
-
-                        // Remove tail
-                        var snakeTail = snake.pop();
-                        snakeTail.classList.remove('snake');
+                        snake.addHead(nextCell);
+                        snake.removeTail();
                     }
                 }
             }
 
         });
 
-        var calcNextCellCoordinate = (currentCoordinate, direction) => {
-            var row = currentCoordinate.split(',')[0];
-            var col = currentCoordinate.split(',')[1];
-            switch (direction) {
-                case "ArrowUp":
+        var getNextCell = (snake) => {
+            const snakeHead = snake.getHead();
+            if (snakeHead == undefined) {
+                return undefined;
+            }
+
+            var row = snakeHead.id.split(',')[0]
+            var col = snakeHead.id.split(',')[1]
+
+            switch (snake.direction) {
+                case "up":
                     if (row == 0) {
-                        return -1;
+                        return undefined;
                     }
                     row--;
                     break;
-                case "ArrowRight":
+                case "right":
                     if (col == width - 1) {
-                        return -1;
+                        return undefined;
                     }
                     col++;
                     break;
-                case "ArrowDown":
+                case "down":
                     if (row == height - 1) {
-                        return -1;
+                        return undefined;
                     }
                     row++;
                     break;
-                case "ArrowLeft":
+                case "left":
                     if (col == 0) {
-                        return -1;
+                        return undefined;
                     }
                     col--;
                     break;
             }
-            return [row, col];
+            return get([row, col]);
         };
 
     </script>
