@@ -20,6 +20,7 @@
         const moveEvery = 1000;
         const grid = [];
         const emptyCells = [];
+        var play = false;
 
         const get = (coord) => {
             return document.getElementById(`${coord[0]},${coord[1]}`);
@@ -73,6 +74,12 @@
                 }
                 if (row == height - 1) {
                     cell.classList.add("cell-last-row");
+                }
+                if (col == 0) {
+                    cell.classList.add("cell-first-col");
+                }
+                if (row == 0) {
+                    cell.classList.add("cell-first-row");
                 }
                 grid[row][col] = get([row, col]);
                 emptyCells[row][col] = get([row, col]);
@@ -136,6 +143,7 @@
         }
 
         document.addEventListener("keydown", function(event) {
+            play = true;
             const direction = keyToDirection[event.key];
              
             if (direction != undefined && notOppositeDirection(direction, snake.direction)) {
@@ -145,9 +153,13 @@
         });
 
         const advanceSnake = () => {
+            if (!play) {
+                return;
+            }
             const nextCell = getNextCell(snake);
                 if (nextCell == undefined || nextCell.classList.contains("snake")) {
                     alert("GAME OVER")
+                    play = false;
                     resetGame();
                 } else {
                     if (nextCell.classList.contains("fruit")) {
@@ -219,20 +231,33 @@
             border-spacing: 0;
             border-collapse: collapse;
         }
+        td {
+            border-radius: 10px; /* Adjust the value to your preference */
+            /* padding: 10px;       /* Optional: Adding some padding for better visual */
+            border: 1px solid white; /* Optional: Adding a border for visibility */
+            }
         .cell {
             width: 30;
             height: 30;
-            border-left: 2px solid black;
+        }
+        .cell-first-row {
             border-top: 2px solid black;
         }
         .cell-last-row {
             border-bottom: 2px solid black;
         }
+        .cell-first-col {
+            border-left: 2px solid black;
+        }
         .cell-last-col {
             border-right: 2px solid black;
         }
         .fruit {
-            background-color: red;
+            background-image: url('Guster.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;            
+            /* background-color: red; */
         }
         .snake {
             background-color: green;
