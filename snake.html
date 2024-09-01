@@ -1,6 +1,6 @@
 <html>
     <head>
-        Snake
+        Snake <p id="score">0</p>
     </head>
     <body>
         <table id="grid">
@@ -10,9 +10,8 @@
 
     <script>
         /*
-            Auto-advance
+            Bug, changing directions very quickly will fail sometimes
             Win game
-            Does fruit generation need to more sophisticated?
         */
 
         var height = 20;
@@ -21,6 +20,7 @@
         const grid = [];
         const emptyCells = [];
         var play = false;
+        var score = 0;
 
         const get = (coord) => {
             return document.getElementById(`${coord[0]},${coord[1]}`);
@@ -110,7 +110,13 @@
             return emptySpaces;
         };
 
+        const setScore = (value) => {
+            score = value;
+            document.getElementById("score").textContent = score;
+        }
+
         const resetGame = () => {
+            setScore(0);
             for (var row = 0; row < height; row++) {
                 for (var col = 0; col < width; col++) {
                     const cell = get([row, col]);
@@ -165,6 +171,7 @@
                     if (nextCell.classList.contains("fruit")) {
                         snake.addHead(nextCell);
                         addRandomFruit();
+                        setScore(score + 1);
                     } else {
                         snake.addHead(nextCell);
                         snake.removeTail();
