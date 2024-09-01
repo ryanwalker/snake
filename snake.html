@@ -86,7 +86,6 @@
             const min = 0;
             const max = emptyCells.length - 1;
             const randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
-            console.log(emptyCells)
             emptyCells[randomInt].classList.add('fruit');
         }
 
@@ -96,14 +95,11 @@
                 for (var col = 0; col < width; col++) {
                     const cell = grid[row][col];
                     const classList = cell.classList;
-                    console.log(classList)
                     if (!classList.contains('snake') && !classList.contains('fruit')) {
-                        console.log("PUSH")
                         emptySpaces.push(cell);
                     }
                 }
             }
-            console.log(emptySpaces);
             return emptySpaces;
         };
 
@@ -129,7 +125,6 @@
 
 
         resetGame();
-        // addRandomFruit();
 
 
 
@@ -145,8 +140,12 @@
              
             if (direction != undefined && notOppositeDirection(direction, snake.direction)) {
                 snake.direction = direction
-                const nextCell = getNextCell(snake);
-                console.log(nextCell)
+            }
+
+        });
+
+        const advanceSnake = () => {
+            const nextCell = getNextCell(snake);
                 if (nextCell == undefined || nextCell.classList.contains("snake")) {
                     alert("GAME OVER")
                     resetGame();
@@ -159,9 +158,10 @@
                         snake.removeTail();
                     }
                 }
-            }
+        };
 
-        });
+        setInterval(advanceSnake, 100);
+
 
         var getNextCell = (snake) => {
             const snakeHead = snake.getHead();
