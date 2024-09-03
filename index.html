@@ -1,17 +1,21 @@
 <html>
     <head>
-        Snake <p id="score">0</p>
     </head>
     <body>
-        <table id="grid">
-        </table>
+        <div style="text-align: center;">
+            Snake <p id="score">0</p>
+        </div>
+        <div style="text-align: center;">
+            <table style="margin: 0 auto;" id="grid">
+            </table>
+        </div>
     </body>
 
 
     <script>
         /*
-            Bug, changing directions very quickly will fail sometimes
-            Win game ??
+            Bug, changing directions very
+            Win game
         */
 
         var height = 20;
@@ -21,6 +25,7 @@
         const emptyCells = [];
         var play = false;
         var score = 0;
+        var nextDirection = 'down';
 
         const get = (coord) => {
             return document.getElementById(`${coord[0]},${coord[1]}`);
@@ -149,19 +154,29 @@
         }
 
         document.addEventListener("keydown", function(event) {
-            play = true;
-            const direction = keyToDirection[event.key];
-             
-            if (direction != undefined && notOppositeDirection(direction, snake.direction)) {
-                snake.direction = direction
+            const pressedKey = event.key;
+            if (event.code == 'Space') {
+                play = false;
+                return; 
             }
 
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(pressedKey)) {
+                if (play == false) {
+                    play = true;
+                }
+                nextDirection = keyToDirection[pressedKey];
+            }
         });
 
         const advanceSnake = () => {
             if (!play) {
                 return;
             }
+
+            if (notOppositeDirection(nextDirection, snake.direction)) {
+                snake.direction = nextDirection;
+            }
+
             const nextCell = getNextCell(snake);
                 if (nextCell == undefined || nextCell.classList.contains("snake")) {
                     alert("GAME OVER")
