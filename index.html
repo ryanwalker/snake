@@ -3,11 +3,11 @@
     </head>
     <body>
         <div style="text-align: center;">
-            Snake <p id="score">0</p>
-        </div>
-        <div style="text-align: center;">
             <table style="margin: 0 auto;" id="grid">
             </table>
+        </div>
+        <div style="text-align: center;">
+            Score <p id="score">0</p>
         </div>
     </body>
 
@@ -26,6 +26,7 @@
         var play = false;
         var score = 0;
         var nextDirection = 'down';
+        var intervalId;
 
         const get = (coord) => {
             return document.getElementById(`${coord[0]},${coord[1]}`);
@@ -155,6 +156,22 @@
 
         document.addEventListener("keydown", function(event) {
             const pressedKey = event.key;
+            if (["1", "2", "3"].includes(pressedKey)) {
+                switch(pressedKey) {
+                    case "1":
+                        setSpeed(150);
+                        break;
+                    case "2":
+                        setSpeed(100);
+                        break;
+                    case "3":
+                        setSpeed(50);
+                        break;
+
+                }
+            }
+
+
             if (event.code == 'Space') {
                 play = false;
                 return; 
@@ -194,7 +211,11 @@
                 }
         };
 
-        setInterval(advanceSnake, 100);
+        const setSpeed = (speed) => {
+            console.log('clear interval');
+            clearInterval(intervalId);
+            intervalId = setInterval(advanceSnake, speed);
+        }
 
 
         var getNextCell = (snake) => {
